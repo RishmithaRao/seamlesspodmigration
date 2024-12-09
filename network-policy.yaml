@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: math-operations-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: math-operations
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: math-operations
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: math-operations

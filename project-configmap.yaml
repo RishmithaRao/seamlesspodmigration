@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: project-configmap
+data:
+  CHECKPOINT_FILE: "/data/checkpoint.txt"
+  RESULT_FILE: "/data/result.txt"
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migration-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: mul-div-container
+          image: rishmitha88/mul-div-container:latest
+          command: ["/bin/sh"]
+          args: ["-c", "kubectl delete pod -l app=project-pod && kubectl create -f new-mul-div-pod.yaml"]
+      restartPolicy: Never

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-pod
+  template:
+    metadata:
+      labels:
+        app: project-pod
+    spec:
+      serviceAccountName: project-manager-sa
+      containers:
+      - name: project-manager
+        image: rishmitha88/project-manager:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /data/shared
+      - name: addition-container
+        image: rishmitha88/addition-container:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /data/shared
+      - name: mul-div-container
+        image: rishmitha88/mul-div-container:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        volumeMounts:
+        - name: shared-volume
+          mountPath: /data/shared
+      volumes:
+      - name: shared-volume
+        persistentVolumeClaim:
+          claimName: shared-pvc
